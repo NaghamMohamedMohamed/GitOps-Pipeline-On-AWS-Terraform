@@ -10,7 +10,7 @@ provider "aws" {
 # ----------------------------------------------------------
 
 
-module "vpc" {
+module "network" {
   source               = "./modules/network"
   vpc_cidr             = var.vpc_cidr
   public_subnets = {
@@ -43,4 +43,17 @@ module "vpc" {
     }
   }
   project_name         = var.project_name
+}
+
+
+# ----------------------------------------------------------
+
+#                     EKS module
+
+# ----------------------------------------------------------
+
+module "eks" {
+  source = "./modules/eks"
+  private_subnet_ids = module.network.private_subnet_ids_list
+  project_name = var.project_name
 }
