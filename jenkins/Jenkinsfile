@@ -1,0 +1,69 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_DEFAULT_REGION = 'us-east-1'
+        ECR_REPO = '576607007321.dkr.ecr.us-east-1.amazonaws.com/gitops-gp-ecr'
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Clone NodeJS App Repo') {
+            steps {
+                sh 
+                '''
+                git clone https://github.com/mahmoud254/jenkins_nodejs_example.git"
+                mv jenkins_nodejs_example nodejs-app
+                '''
+
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -t $ECR_REPO:$IMAGE_TAG ../nodejs-app'
+                }
+            }
+        }
+
+        stage('Login to ECR') {
+            steps {
+                script {
+                    // IRSA provides AWS creds automatically, so no explicit credentials needed
+                    sh '''
+                    aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
+                    '''
+                }
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    sh 'docker push $ECR_REPO:$IMAGE_TAG'
+                }
+            }
+        }
+
+        stage('Run Terraform For AWS Infrastructure build') {
+            steps {
+                dir('terraform') {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-creds']]) {
+                        script {
+                            sh '''
+                            cd ../terraform
+                            terraform init
+                            terraform plan -out=tfplan
+                            terraform apply -auto-approve tfplan
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
