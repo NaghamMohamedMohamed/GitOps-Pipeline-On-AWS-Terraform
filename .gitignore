@@ -1,0 +1,43 @@
+# === Terraform ===
+*.tfstate
+*.tfstate.*
+.terraform/
+crash.log
+terraform.tfvars
+terraform.tfvars.json
+override.tf
+override.tf.json
+*.tfplan
+*.backup
+.terraform.lock.hcl
+terraform_output.json
+# === Ansible ===
+*.retry
+*.log
+*.cache
+*.facts
+inventory.ini
+# ansible.cfg
+
+# === SSH Keys ===
+*.pem
+*.key
+.ssh/
+*.json
+# === Secrets ===
+.env
+.env.*
+secrets.yml
+vault_pass.txt
+
+# === Node.js (for the deployed app) ===
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# === OS/IDE Files ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

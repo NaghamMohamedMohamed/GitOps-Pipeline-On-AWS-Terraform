@@ -57,3 +57,15 @@ module "eks" {
   private_subnet_ids = module.network.private_subnet_ids_list
   project_name = var.project_name
 }
+
+# ----------------------------------------------------------
+
+#                     ECR module
+
+# ----------------------------------------------------------
+
+module "ecr" {
+  source = "./modules/ecr"
+  project_name = var.project_name
+  ecr_repo_name = var.ecr_repo_name
+}

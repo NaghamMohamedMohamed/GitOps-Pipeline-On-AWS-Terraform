@@ -1,9 +1,10 @@
-
 variable "project_name" {
   default = "gitops-gp"
-  
 }
 
+variable "ecr_repo_name" {
+  default = "ecr"
+}
 # ----------------------------------------------------------
 
 #                     network module
