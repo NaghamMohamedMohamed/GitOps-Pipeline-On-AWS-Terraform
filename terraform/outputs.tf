@@ -26,3 +26,9 @@ output "private_subnet_ids_list" {
   description    = "List of private subnet ids"
   value = module.network.private_subnet_ids_list
 }
+
+output "jenkins_irsa_role_arn" {
+  description = "The ARN of the Jenkins IRSA role"
+  value       = module.eks.jenkins_irsa_role_arn
+  
+}
