@@ -45,23 +45,6 @@ pipeline {
                 }
             }
         }
-
-        // stage('Run Terraform For AWS Infrastructure build') {
-        //     steps {
-        //         dir('terraform') {
-        //             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-creds']]) {
-        //                 script {
-        //                     sh '''
-        //                     cd ../terraform
-        //                     terraform init
-        //                     terraform plan -out=tfplan
-        //                     terraform apply -auto-approve tfplan
-        //                     '''
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
     }
 }
 
