@@ -6,52 +6,43 @@ controller:
     - git
     - docker-workflow
     - pipeline-aws
-    - terraform
     - github
     - job-dsl
-  # serviceAccount:
-  #    create: true
-  #    name: jenkins-sa 
-  #    annotations:
-  #     eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/JenkinsIRSA
 # This script will create a seed job that will generate the pipeline job for the Node.js GitOps CI/CD.
   initScripts:
     seed-job.groovy: |
-      import jenkins.model.*
-      import hudson.model.*
       import javaposse.jobdsl.plugin.ExecuteDslScripts
 
-      def job = Jenkins.instance.createProject(FreeStyleProject, 'seed-job')
+      println("⚙️  Starting Seed Job execution...")
 
-      def builder = new ExecuteDslScripts()
-      builder.setScriptText('''
-        pipelineJob("nodejs-gitops-ci") {
-          definition {
-            cpsScm {
-              scm {
-                git {
-                  remote {
-                    url("https://github.com/NaghamMohamedMohamed/GitOps-Pipeline-On-AWS-Terraform.git")
-                  }
-                  branches("*/main")
+      def jobDslScript = '''
+      pipelineJob("nodejs-gitops-ci") {
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url("https://github.com/NaghamMohamedMohamed/GitOps-Pipeline-On-AWS-Terraform.git")
                 }
+                branches("*/main")
               }
-              scriptPath("/jenkins/Jenkinsfile")
             }
-          }
-          triggers {
-            githubPush()
+            scriptPath("Jenkinsfile")
           }
         }
-      ''')
-      builder.setUseScriptText(true)
-      job.buildersList.add(builder)
-      job.save()
-      println("✅ Seed job created and ready.")
-  persistence:
-    enabled: true
-    storageClass: "gp2"        
-    accessMode: "ReadWriteOnce"
-    size: "10Gi"
-    mountPath: "/var/jenkins_home"
-    existingClaim: ""                  
+        triggers {
+          githubPush()
+        }
+      }
+      '''
+
+      def job = new ExecuteDslScripts()
+      job.setScriptText(jobDslScript)
+      job.setUseScriptText(true)
+      job.run()
+
+      println("✅ Seed job created.")
+
+persistence:
+  enabled: true
+  existingClaim: "jenkins-pvc"              
