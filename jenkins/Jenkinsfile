@@ -12,9 +12,8 @@ pipeline {
         stage('Clone NodeJS App Repo') {
             steps {
                 echo "🔄 Cloning NodeJS application repository..."
-                sh 
-                '''
-                git clone https://github.com/mahmoud254/jenkins_nodejs_example.git"
+                sh '''
+                git clone https://github.com/mahmoud254/jenkins_nodejs_example.git
                 mv jenkins_nodejs_example nodejs-app
                 '''
                 echo "✅ Repository cloned successfully"
