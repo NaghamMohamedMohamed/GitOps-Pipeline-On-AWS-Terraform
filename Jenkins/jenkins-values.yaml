@@ -1,0 +1,24 @@
+controller:
+  serviceType: LoadBalancer
+  servicePort: 8080
+
+  serviceAccount:
+    name: ebs-csi-controller-sa 
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::576607007321:role/gp_ebs_addon_role
+
+  installPlugins:
+    - kubernetes
+    - workflow-aggregator
+    - git
+    - docker-workflow
+    - pipeline-aws
+    - github
+    # - workspace-cleanup:0.39
+    - ws-cleanup:0.39
+
+persistence:
+  enabled: true
+  storageClass: gp3
+  accessMode: ReadWriteOnce
+  size: 6Gi
