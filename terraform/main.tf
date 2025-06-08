@@ -68,4 +68,6 @@ module "ecr" {
   source = "./modules/ecr"
   project_name = var.project_name
   ecr_repo_name = var.ecr_repo_name
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
 }
