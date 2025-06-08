@@ -25,7 +25,6 @@ inventory.ini
 .ssh/
 *.json
 # === Secrets ===
-.env
 .env.*
 secrets.yml
 vault_pass.txt
