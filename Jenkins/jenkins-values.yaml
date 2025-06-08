@@ -14,7 +14,6 @@ controller:
     - docker-workflow
     - pipeline-aws
     - github
-    # - workspace-cleanup:0.39
     - ws-cleanup:0.39
 
 persistence:
