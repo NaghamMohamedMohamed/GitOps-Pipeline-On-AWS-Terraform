@@ -10,7 +10,7 @@ pipeline {
         IMAGE_TAG = "nodejsapp-${env.BUILD_NUMBER}"
         IMAGE_NAME = "$ECR_REPO:$IMAGE_TAG"
     }
-
+    
     stage('🧹 Clean Workspace') {
         steps {
             echo "🧹 Sweeping the workspace clean..."
