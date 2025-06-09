@@ -6,7 +6,7 @@
 
 # 1. MySQL Secret
 resource "aws_secretsmanager_secret" "mysql" {
-  name = "${var.ecr_repo_name}-mysql-secret"
+  name = "${var.project_name}-mysql-secret"
   description = "MySQL credentials for NodeJS app"
 }
 
@@ -20,7 +20,7 @@ resource "aws_secretsmanager_secret_version" "mysql" {
 
 # 2. Redis Secret
 resource "aws_secretsmanager_secret" "redis" {
-  name = "${var.ecr_repo_name}-redis-secret"
+  name = "${var.project_name}-redis-secret"
   description = "Redis credentials for NodeJS app"
 }
 
