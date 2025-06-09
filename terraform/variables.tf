@@ -26,3 +26,26 @@ variable "private_subnet_cidr" {
 variable "availability_zone" {
   default = "us-east-1a"
 }
+# ----------------------------------------------------------
+
+#                     External Secrets Operator
+
+# ----------------------------------------------------------
+
+variable "mysql_username" {
+  description = "Username for MySQL database"
+  type        = string
+  sensitive   = true
+}
+
+variable "mysql_password" {
+  description = "Password for MySQL database"
+  type        = string
+  sensitive   = true
+}
+
+variable "redis_password" {
+  description = "Password for Redis"
+  type        = string
+  sensitive   = true
+}
