@@ -1,63 +1,102 @@
 pipeline {
+
+    // 🌍 Set environment variables available to all stages
+    environment {
+        AWS_DEFAULT_REGION = 'us-east-1'                                // AWS region for ECR authentication and operations
+        ECR_REPO           = '576607007321.dkr.ecr.us-east-1.amazonaws.com/gitops-gp-ecr' // Full URL of the ECR repository where the image will be pushed
+        IMAGE_TAG          = "1.${env.BUILD_NUMBER}"                    // Unique image tag using Jenkins build number to version images
+        IMAGE_NAME         = "${ECR_REPO}:${IMAGE_TAG}"                 // Complete Docker image name including tag for pushing to ECR
+        TARGET_FOLDER      = 'Nodeapp'            // Folder in the repo to watch for changes to decide if build is needed
+    }
+
+    // 🛠️ Define the Jenkins agent environment for running the pipeline
     agent {
         kubernetes {
-            yamlFile 'kaniko-pod.yaml'
+            // Use a Kubernetes pod configured via the provided YAML file for build isolation and environment setup
+            yamlFile 'Jenkins/kaniko-pod.yaml'
         }
     }
-    
-    environment {
-        AWS_DEFAULT_REGION = 'us-east-1'
-        ECR_REPO = '576607007321.dkr.ecr.us-east-1.amazonaws.com/gitops-gp-ecr'
-        IMAGE_TAG = "nodejsapp-${env.BUILD_NUMBER}"
-        IMAGE_NAME = "${ECR_REPO}:${IMAGE_TAG}"
+
+    // 🔔 Automatically trigger pipeline on GitHub push events (using webhook)
+    triggers {
+        githubPush()
     }
 
     stages {
-        stage('🧹 Clean Workspace') {
+
+        // Stage: Checkout the source code from the configured SCM repository
+        stage('📥 Checkout Source Code') {
             steps {
-                echo "🧹 Sweeping the workspace clean..."
-                cleanWs()
-                echo "✅ Workspace is spotless!"
+                checkout scm
             }
         }
 
-        stage('Clone NodeJS App Repo') {
+        // Stage: Check if there are any changes in the monitored target folder since the last commit
+        stage('🔍 Check for Changes in Target Folder') {
             steps {
-                echo "🔄 Cloning NodeJS application repository..."
-                sh 'git clone https://github.com/mahmoud254/jenkins_nodejs_example.git'
-                echo "✅ Repository cloned successfully"
+                script {
+                    // Run git diff to get list of files changed between the last two commits
+                    def changes = sh(
+                        script: "git diff --name-only HEAD~1 HEAD",
+                        returnStdout: true
+                    ).trim().split("\n")
+
+                    // Determine if any changed files are within the TARGET_FOLDER directory
+                    def changed = changes.any { it.startsWith("${TARGET_FOLDER}/") }
+
+                    if (!changed) {
+                        // If no relevant changes, mark build to skip by writing 'true' to skip_build file
+                        echo "⚠️ No changes in '${TARGET_FOLDER}'. Skipping build."
+                        currentBuild.description = "No changes in ${TARGET_FOLDER}"
+                        writeFile file: 'skip_build', text: 'true'
+                    } else {
+                        // Changes detected, mark build to proceed by writing 'false'
+                        echo "✅ Changes found in '${TARGET_FOLDER}', continuing..."
+                        writeFile file: 'skip_build', text: 'false'
+                    }
+                }
             }
         }
-
-        stage('Build & Push Docker Image') {
+       
+        // Stage: Build and push Docker image, but only if build should proceed (based on changes)
+        stage('🚀 Build & Push Docker Image') {
+            when {
+                // Conditional execution using helper function to check if build should run
+                expression {
+                    return shouldBuild()
+                }
+            }
             steps {
                 container('kaniko') {
-                    echo "🔨 Building Docker image with Kaniko... & 🚀 Pushing Docker image to ECR..."
-
+                    // Run Kaniko executor inside the 'kaniko' container to build and push Docker image
                     sh """
-                    /kaniko/executor \\
-                      --context=./jenkins_nodejs_example \\
-                      --dockerfile=./jenkins_nodejs_example/dockerfile \\
-                      --destination=${IMAGE_NAME} \\
-                      --oci-layout-path=/kaniko/oci-layout \\
-                      --verbosity=debug \\
-                      --cache=true \\
-                      --cache-repo=${ECR_REPO} \\
-                      --cache-dir=/kaniko/cache \\
-                      --skip-tls-verify=false
+                        /kaniko/executor \\
+                          --context=./${TARGET_FOLDER} \\
+                          --dockerfile=./${TARGET_FOLDER}/dockerfile \\
+                          --destination=${IMAGE_NAME} \\
+                          --oci-layout-path=/kaniko/oci-layout \\
+                          --verbosity=debug \\
+                          --skip-tls-verify=false
                     """
                 }
-                echo "✅ Docker image build complete & pushed: ${IMAGE_NAME}"
+                // Log confirmation that Docker image was successfully pushed
+                echo "✅ Docker image pushed : ${IMAGE_NAME}"
             }
         }
     }
 
+    // 📢 Post-build actions and notifications based on build result
     post {
-        failure {
-            echo "❌ Pipeline failed. Check above logs for details."
-        }
         success {
-            echo "🎉 Pipeline completed successfully!"
+            echo "🎉 Pipeline completed successfully."
+        }
+        failure {
+            echo "❌ Pipeline failed. Check the logs above."
         }
     }
+}
+
+// ✅ Helper function to decide if the build should continue, by reading the skip_build file created earlier
+def shouldBuild() {
+    return fileExists('skip_build') && readFile('skip_build').trim() == 'false'
 }
