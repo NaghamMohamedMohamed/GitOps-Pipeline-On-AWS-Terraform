@@ -15,9 +15,6 @@ spec:
       requests:
         memory: "512Mi"
         cpu: "500m"
-      limits:
-        memory: "1Gi"
-        cpu: "1"
     volumeMounts:
       - name: kaniko-cache
         mountPath: /kaniko/cache
