@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "eso_trust" {
     condition {
       test     = "StringEquals"
       variable = "${replace(module.eks.oidc_provider_url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:external-secrets:external-secrets-sa"]
+      values   = ["system:serviceaccount:app:external-secrets-sa"]
     }
 
     principals {
