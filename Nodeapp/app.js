@@ -34,7 +34,7 @@ db.connect(err => {
 // Connect to Redis
 redisClient.connect()
   .then(() => console.log('Connected to Redis'))
-  .catch(err => console.error('Redis connection error:', err));
+  .catch(err => console.error('Redis connection error :', err));
 
 app.get('/', (req, res) => {
   res.send('Hello World from ITI 45 - This app is connected to MySql DB and Redis!');
