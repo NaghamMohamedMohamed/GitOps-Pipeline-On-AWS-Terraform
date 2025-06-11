@@ -25,7 +25,7 @@ const redisClient = redis.createClient({
 // Connect to MySQL
 db.connect(err => {
   if (err) {
-    console.error('MySQL connection error:', err);
+    console.error('MySQL connection error :', err);
   } else {
     console.log('Connected to MySQL...');
   }
