@@ -84,18 +84,6 @@ pipeline {
                 echo "✅ Docker image pushed : ${IMAGE_NAME}"
             }
         }
-
-        stage('🧹 Clean Workspace') {
-            when {
-                expression {
-                    return shouldBuild()
-                }
-            }
-            steps {
-                cleanWs()
-                echo "✅ Cleaned workspace."
-            }
-        }
     }
 
     // 📢 Post-build actions and notifications based on build result
