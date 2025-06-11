@@ -76,11 +76,24 @@ pipeline {
                           --destination=${IMAGE_NAME} \\
                           --oci-layout-path=/kaniko/oci-layout \\
                           --verbosity=debug \\
+                          --cleanup \\
                           --skip-tls-verify=false
                     """
                 }
                 // Log confirmation that Docker image was successfully pushed
                 echo "✅ Docker image pushed : ${IMAGE_NAME}"
+            }
+        }
+
+        stage('🧹 Clean Workspace') {
+            when {
+                expression {
+                    return shouldBuild()
+                }
+            }
+            steps {
+                cleanWs()
+                echo "✅ Cleaned workspace."
             }
         }
     }
