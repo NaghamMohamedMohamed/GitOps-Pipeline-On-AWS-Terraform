@@ -15,6 +15,7 @@ resource "aws_secretsmanager_secret_version" "mysql" {
   secret_string = jsonencode({
     username = var.mysql_username
     password = var.mysql_password
+    mysql-root-password = var.mysql_password
   })
 }
 
