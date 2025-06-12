@@ -153,7 +153,7 @@ This project showcases a complete GitOps-based CI/CD pipeline using Terraform, A
 
 ---
 
-## 🔧 Infrastructure Deployment
+## 🔧 Project Deployment
 
 ### 🔁 1. Clone Repository
 
