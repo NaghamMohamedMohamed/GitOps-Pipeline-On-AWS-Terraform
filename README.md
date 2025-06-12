@@ -589,10 +589,13 @@ kubectl logs <argocd-image-updater-pod-name> -n argocd
 
 ![New updates in the app](Images/Pipeline-Builds.png)
 
+---
+
 ![Newest Image Pushed to ECR](Images/Final-ECR-Image.png)
 
-![Deployed App After Commiting Changes in it](Images/New-App.jpeg)
+---
 
+![Deployed App After Commiting Changes in it](Images/New-App.jpeg)
 
 ---
 
