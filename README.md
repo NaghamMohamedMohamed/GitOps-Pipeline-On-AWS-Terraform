@@ -12,7 +12,7 @@ This project showcases a complete GitOps-based CI/CD pipeline using Terraform, A
 ☁️  **Terraform** for provisioning infrastructure (VPC, subnets, NAT, IGW, EKS , ECR , EBS , IAM Roles & Policies , IRSA , RBAC)  
 ☸️ **Amazon EKS** for running Kubernetes workloads ( coupled with EBS CSI Driver )  
 📦 **Helm** for CI/CD tools installation package management of Kubernetes applications  
-⚙️ **Jenkins** for automated Docker build & Terraform deployment , triggered using **Github Webhook**
+⚙️ **Jenkins** for automated Docker build & Terraform deployment , triggered using **Github Webhook**  
 🚀 **ArgoCD** for GitOps-based CD  
 🔁 **Argo Image Updater** for auto-updating images  
 🔐 **External Secrets Operator** for syncing secrets from AWS Secrets Manager   
