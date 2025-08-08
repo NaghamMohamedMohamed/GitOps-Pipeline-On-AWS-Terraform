@@ -26,7 +26,7 @@ This project showcases a complete GitOps-based CI/CD pipeline using Terraform, A
 
 ### Terraform Infrastructure
 
-![!Terraform Infra](Images/Terraform-infra.png)
+![!Terraform Infra](Images/Terraform-Infrastructure.png)
 
 ### CI/CD Workflow
 
